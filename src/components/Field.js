@@ -1,12 +1,16 @@
 import React from 'react';
 
 const Field = (props) => {
-	const {range} = props;
-	const cells = Array(Math.pow(range, 2)).map((cell, index) => <div className="cell" key={index}></div>)
+	const {cells, markerPosition} = props;
+	// console.log(markerPosition)
 	return (
 		<div className="field">
-		{cells.length}
-		</div>
+			{cells.map((cell, index) => <div className="cell" key={index}>
+				{markerPosition === index && <div className="marker"></div>}
+				</div>)
+			}
+			
+	</div>
 	)
 }
 

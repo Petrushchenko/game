@@ -1,0 +1,14 @@
+.arrows {
+	width: 600px;
+	margin: 0 auto;
+	display: flex;
+	justify-content: center;
+
+	.arrow {
+		height: 50px;
+		width: 50px;
+		border: 1px solid $border-color;
+		margin: 2px;
+		flex-basis: 1;
+	}
+}
