@@ -1,3 +1,6 @@
+@function field($size) {
+    @return ($size * $size);
+}
 .arrows {
 	width: 600px;
 	margin: 0 auto;
@@ -8,7 +11,26 @@
 		height: 50px;
 		width: 50px;
 		border: 1px solid $border-color;
+		border-radius: 3px;
 		margin: 2px;
-		flex-basis: 1;
+		background-size: 1% 1%;
+		background-repeat: no-repeat;
+		background-position: center;
+
+		@each $direction in $directions {
+			&-#{$direction} {
+				background-image: url("../assets/#{$direction}-arrow.svg");
+				background-size: 90% 90%;
+				transition: background-size 1s ease-in;
+				
+				@for $j from 0 through field($size) {
+					&.arrow-#{$j} {
+						transition-delay: calc(1s * #{$j});
+					}
+				}
+			}
+		}
+
+		
 	}
 }

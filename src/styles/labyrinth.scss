@@ -1,6 +1,4 @@
 
-$n: 3;
-
 .field {
 	width: $field-width;
 	height: $field-height;
@@ -9,13 +7,29 @@ $n: 3;
 	flex-wrap: wrap;
 
 	.cell {
-		height: calc(#{$field-height} / #{$n});
-		width: calc(#{$field-width} / #{$n});
+		height: calc(#{$field-height} / #{$size});
+		width: calc(#{$field-width} / #{$size});
 		border: 1px solid $border-color;
+		border-radius: 3px;
 		box-sizing: border-box;
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		background-position: 10% 10%;
+		background-size: 0 0;
+		background-repeat:  no-repeat;
+		transition: background-size 1s ease-in;
+
+
+		&.correct {
+			background-image: url("../assets/like.svg");
+			background-size: 50% 50%;
+		}
+
+		&.incorrect {
+			background-image: url("../assets/thumb-down.svg");
+			background-size: 50% 50%;
+		}
 	}
 
 	.marker {

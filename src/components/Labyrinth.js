@@ -7,13 +7,34 @@ class Labyrinth extends Component {
 	state = {
 		gameRange:3,
 		markerPosition: null,
-		positions: []
+		positions: [],
+		clicked: false,
+		endPosition: null,
+		clickedCell: null
 	}
 
 	setMarkerPosition =() => {
 		this.setState((prevState) => ({
 			...prevState, 
-			markerPosition: Math.floor(Math.random() * Math.pow(prevState.gameRange, 2) )
+			markerPosition: Math.floor(Math.random() * Math.pow(prevState.gameRange, 2) ),
+			clicked: false,
+			endPosition: null,
+			clickedCell: null
+		}));
+	}
+
+	handleClick = (index) => {
+		if(this.state.clicked) {
+			return;
+		}
+
+		this.setState((prevState) =>({
+			...prevState,
+			clicked: true,
+			positions: [],
+			markerPosition: null,
+			clickedCell: index,
+			endPosition: prevState.positions[prevState.positions.length - 1].position
 		}));
 	}
 
@@ -36,7 +57,7 @@ class Labyrinth extends Component {
 					directions = ["up", "left"];
 					break;
 				case firstColumnIndexes(range).includes(start):
-					directions= ["up", "doun", "right"];
+					directions= ["up", "down", "right"];
 					break;
 				case lastColumnIndexes(range).includes(start):
 					directions= ["up", "down", "left"];
@@ -64,7 +85,7 @@ class Labyrinth extends Component {
 					currentPosition +=range;
 			}
 			res.push({direction, position: currentPosition});
-			console.log(direction, currentPosition)
+			// console.log(direction, currentPosition)
 				return this.moveArrow(currentPosition, range, counter+1, res);
 		} else {
 			return res;
@@ -73,23 +94,24 @@ class Labyrinth extends Component {
 	componentDidUpdate(prevProps, prevState) {
 
 		if (prevState.positions.length === 0 && prevState.positions === this.state.positions) {
-			console.log(prevState.positions.length)
 			this.setState((prevState) => ({
 				...prevState, 
-				positions: [...this.moveArrow(this.state.markerPosition, this.state.gameRange, 0)]
+				positions: [...this.moveArrow(this.state.markerPosition, this.state.gameRange, 0)],
 			}));
 		}
-		console.log(this.state.positions)
-
 	}
 
 	render() {
-		const {gameRange, markerPosition, positions} = this.state;
+		const { positions, gameRange} = this.state;
 		const cells = Array(Math.pow(gameRange, 2)).fill(null);
 		return (
 			<div>
-				<Field cells={cells} markerPosition={markerPosition}/>
-				<button onClick={this.setMarkerPosition}>set marker ({markerPosition})</button>
+				<Field 
+					cells={cells}
+					onClick = {this.handleClick}
+					{...this.state}
+				/>
+				<button onClick={this.setMarkerPosition}>start game</button>
 				<Arrows arrows={[...cells, null]} positions={positions}/>
 			</div>
 		)
