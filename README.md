@@ -1,4 +1,4 @@
-## [link](https://petrushchenko.github.io/game/)
+## You can try this game on [link](https://petrushchenko.github.io/game/)
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
