@@ -2,10 +2,10 @@ import React from 'react';
 import cn from 'classnames';
 
 const Arrows = (props) => {
-	const { arrows, positions} = props;
+	const { arrows, positions, onTransitionEnd} = props;
 
 	return (
-		<div className="arrows">
+		<div className="arrows" >
 			{arrows.map((arrow, index) => {
 				return (
 					<div 
@@ -16,7 +16,8 @@ const Arrows = (props) => {
 							"arrow-right" : positions.length && positions[index].direction === "right",
 							[`arrow-${index }`] : true
 							})} 
-						key={index}></div>)
+						key={index}
+						onTransitionEnd={onTransitionEnd}></div>)
 				})
 			}
 		</div>

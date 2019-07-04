@@ -1,36 +1,41 @@
-@function field($size) {
-    @return ($size * $size);
+@function field($i) {
+	@return ($i * $i);
 }
 .arrows {
-	width: 600px;
+	max-width: 600px;
 	margin: 0 auto;
 	display: flex;
 	justify-content: center;
+	flex-wrap: wrap;
+	margin-top: 20px;
 
 	.arrow {
 		height: 50px;
-		width: 50px;
+		flex-basis: 50px;
+		flex-shrink: 0;
 		border: 1px solid $border-color;
 		border-radius: 3px;
 		margin: 2px;
 		background-size: 1% 1%;
 		background-repeat: no-repeat;
 		background-position: center;
+		background-color: lighten($border-color, 40%);
 
 		@each $direction in $directions {
 			&-#{$direction} {
 				background-image: url("../assets/#{$direction}-arrow.svg");
 				background-size: 90% 90%;
 				transition: background-size 1s ease-in;
-				
-				@for $j from 0 through field($size) {
-					&.arrow-#{$j} {
-						transition-delay: calc(1s * #{$j});
+
+				@each $i in $size {
+					@for $j from 0 through field($i) {
+						&.arrow-#{$j} {
+							transition-delay: calc(1s * #{$j});
+						}
 					}
 				}
+				
 			}
 		}
-
-		
 	}
 }

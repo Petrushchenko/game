@@ -1,8 +1,10 @@
-$field-width: 400px;
-$field-height: 400px;
+$field-width: 360px;
+$field-height: 360px;
 
 $border-color: #8145d3;
 $marker-color: #c945d3;
+$green-color: #1ed510;
+$gray-color: #808080;
 
 $directions: ["down", "up", "left", "right"];
-$size: 3;
+$size: [3, 4, 5];

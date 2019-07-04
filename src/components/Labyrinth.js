@@ -1,41 +1,60 @@
 import React, {Component} from 'react';
 import Field from './Field';
 import Arrows from './Arrows';
+import Controls from './Controls';
+import * as Helpers from '../utils/helpers';
 import '../styles/main.scss';
 
 class Labyrinth extends Component {
 	state = {
+		gameRanges: [3, 4, 5],
 		gameRange:3,
 		markerPosition: null,
 		positions: [],
-		clicked: false,
 		endPosition: null,
-		clickedCell: null
+		clickedCellIndex: null
 	}
 
-	setMarkerPosition =() => {
-		this.setState((prevState) => ({
-			...prevState, 
-			markerPosition: Math.floor(Math.random() * Math.pow(prevState.gameRange, 2) ),
-			clicked: false,
+	setMarkerPosition = async () => {
+		await this.setState({
+			markerPosition: Math.floor(Math.random() * Math.pow(this.state.gameRange, 2) ),
 			endPosition: null,
-			clickedCell: null
-		}));
+			clickedCellIndex: null,
+			positions: [],
+			transitionsCounter: 0
+		});
+
+		const positions = this.moveArrow(this.state.markerPosition, this.state.gameRange, 0);
+
+		this.setState({
+			positions: positions,
+			endPosition: positions[positions.length - 1].position
+		})
+
+	}
+
+	setGameRange = async ({value}) => {
+
+		await this.setState({
+			gameRange: +value,
+			endPosition: null,
+			clickedCellIndex: null,
+			markerPosition: null,
+			transitionsCounter: 0
+		});
 	}
 
 	handleClick = (index) => {
-		if(this.state.clicked) {
+		if(!this.state.markerPosition || this.state.transitionsCounter < Math.pow(this.state.gameRange, 2) + 1) {
 			return;
 		}
 
-		this.setState((prevState) =>({
-			...prevState,
-			clicked: true,
+		this.setState({
+			...this.state,
 			positions: [],
 			markerPosition: null,
-			clickedCell: index,
-			endPosition: prevState.positions[prevState.positions.length - 1].position
-		}));
+			clickedCellIndex: index,
+		});
 	}
 
 	moveArrow = (start, range, counter, res = []) => {
@@ -56,10 +75,10 @@ class Labyrinth extends Component {
 				case start === Math.pow(range, 2) - 1:
 					directions = ["up", "left"];
 					break;
-				case firstColumnIndexes(range).includes(start):
+				case Helpers.firstColumnIndexes(range).includes(start):
 					directions= ["up", "down", "right"];
 					break;
-				case lastColumnIndexes(range).includes(start):
+				case Helpers.lastColumnIndexes(range).includes(start):
 					directions= ["up", "down", "left"];
 					break;
 				case start === Math.pow(range, 2) - range:
@@ -70,7 +89,7 @@ class Labyrinth extends Component {
 					break;
 				default: directions = ["up", "down", "left", "right"];
 			}
-			const direction = getDirection(directions);
+			const direction = Helpers.getDirection(directions);
 			switch (direction) {
 				case "left":
 					currentPosition -= 1;
@@ -91,41 +110,42 @@ class Labyrinth extends Component {
 			return res;
 		}
 	}
-	componentDidUpdate(prevProps, prevState) {
 
-		if (prevState.positions.length === 0 && prevState.positions === this.state.positions) {
-			this.setState((prevState) => ({
-				...prevState, 
-				positions: [...this.moveArrow(this.state.markerPosition, this.state.gameRange, 0)],
-			}));
-		}
+	handleTr = () => {
+
+		this.setState({
+			transitionsCounter: this.state.transitionsCounter + 1
+		})
 	}
 
 	render() {
-		const { positions, gameRange} = this.state;
-		const cells = Array(Math.pow(gameRange, 2)).fill(null);
+		const { positions, gameRange, transitionsCounter, gameRanges, clickedCellIndex, markerPosition} = this.state;
+		const cells =Array(Math.pow(gameRange, 2)).fill(null);
 		return (
 			<div>
+				<Controls 
+					onClick={this.setMarkerPosition}
+					dropdownOption = { gameRanges }
+					onDropdownChange = {this.setGameRange}
+					currentGameRange = {this.state.gameRange}
+					transitionsCounter = {transitionsCounter}
+					gameRange = { Math.pow(gameRange, 2) + 1}
+					isFieldClicked = { clickedCellIndex === null ? false : true }
+					markerPosition = {markerPosition}
+					/>
 				<Field 
 					cells={cells}
 					onClick = {this.handleClick}
 					{...this.state}
 				/>
-				<button onClick={this.setMarkerPosition}>start game</button>
-				<Arrows arrows={[...cells, null]} positions={positions}/>
+				<Arrows
+					arrows={[...cells, null]} 
+					positions={positions} 
+					onTransitionEnd = {this.handleTr}
+				/>
 			</div>
 		)
 	}
 }
-const firstColumnIndexes = (range) => {
-	return Array.from({length: Math.pow(range, 2)}, (v, i) => i).filter(item => (item) % range === 0 && item < Math.pow(range, 2) - range && item > range - 1);
-};
-const lastColumnIndexes = (range) => {
-	return Array.from({length: Math.pow(range, 2)}, (v, i) => i).filter(item => (item + 1 - range ) % range === 0 && item < Math.pow(range, 2) && item > range - 1);
-}
-const getDirection = (ar) => {
-		const index = Math.floor(Math.random() * ar.length);
-		return ar[index];
-	} 
 
 export default Labyrinth;
